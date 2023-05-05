@@ -1,0 +1,4 @@
+.envrc
+vector_index/**
+settings.json
+__pycache__
