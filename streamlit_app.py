@@ -29,6 +29,7 @@ with basic_qa_tab:
         st.write(qa_bot.answer(chat=chat_input, question=question_input))
 
 
+# This will use a single instance of the LargeCorpusQA class for all users.
 @st.cache_resource
 def get_large_corpus_qa_bot():
     return LargeCorpusQA()

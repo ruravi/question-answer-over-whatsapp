@@ -11,6 +11,7 @@ from langchain.chains import RetrievalQA
 from langchain.document_loaders import WhatsAppChatLoader
 from langchain.docstore.document import Document
 import logging
+import threading
 
 
 class LargeCorpusQA:
@@ -27,6 +28,7 @@ class LargeCorpusQA:
         self.embeddings = HuggingFaceEmbeddings()
         self.PERSIST_DIRECTORY = options["persist_directory"]
         self.qa_bot = None
+        self.qa_bot_lock = threading.Lock()
 
     def initialize_vector_store(self, file_path: Optional[str]) -> None:
         if self.qa_bot is not None:
@@ -46,10 +48,12 @@ class LargeCorpusQA:
             },
         )
 
+    # Thread-safe
     def answer(self, query: str) -> str:
-        if self.qa_bot is None:
-            raise ValueError("Vector store not initialized")
-        return self.qa_bot.run(query)
+        with self.qa_bot_lock:
+            if self.qa_bot is None:
+                raise ValueError("Vector store not initialized")
+            return self.qa_bot.run(query)
 
     def load_vector_store(self) -> BaseRetriever:
         logging.info("Loading pre-existing vector store")
