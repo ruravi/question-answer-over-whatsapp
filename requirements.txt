@@ -1,2 +1,2 @@
-langchain==0.0.159
+langchain==0.0.160
 streamlit==1.22.0

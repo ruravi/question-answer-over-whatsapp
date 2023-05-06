@@ -2,6 +2,7 @@
 
 vector_index/**
 test_vector_index/**
+data/**
 
 settings.json
 __pycache__
