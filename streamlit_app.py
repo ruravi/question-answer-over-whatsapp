@@ -1,9 +1,13 @@
 import streamlit as st
 from simple_qa import SimpleQA
+from large_corpus_qa import LargeCorpusQA
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 st.header("Personalizing Question-Answering Models")
 # The first tab will be a no-memory simple question answering demo.
-[basic_qa_tab] = st.tabs(["Basic QA"])
+[basic_qa_tab, memory_tab] = st.tabs(["Basic QA", "QA with memory"])
 
 with basic_qa_tab:
     chat_input = st.text_area(
@@ -16,8 +20,33 @@ with basic_qa_tab:
                   """,
     )
     question_input = st.text_input(
-        label="Enter a question here", placeholder="Did Jane call John?"
+        key="simple_qa_question",
+        label="Enter a question here",
+        placeholder="Did Jane call John?",
     )
     qa_bot = SimpleQA()
-    if st.button("Answer"):
+    if st.button("Answer", key="simple_qa_answer"):
         st.write(qa_bot.answer(chat=chat_input, question=question_input))
+
+
+@st.cache_resource
+def get_large_corpus_qa_bot():
+    return LargeCorpusQA()
+
+
+with memory_tab:
+    question_input = st.text_input(
+        key="large_corpus_qa_question",
+        label="Enter a question here",
+        placeholder="Did Jane call John?",
+    )
+
+    large_corpus_qa_bot = get_large_corpus_qa_bot()
+    if st.button(
+        "Load",
+        key="large_corpus_qa_load",
+        help="This will take a few minutes. Click Load and come back after a coffee break.",
+    ):
+        large_corpus_qa_bot.initialize_vector_store(None)
+    if st.button("Answer", key="large_corpus_qa_answer"):
+        st.write(large_corpus_qa_bot.answer(question_input))
