@@ -1,6 +1,7 @@
 import streamlit as st
 from simple_qa import SimpleQA
 from large_corpus_qa import LargeCorpusQA
+from models import get_openai_model
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -8,6 +9,12 @@ logging.basicConfig(level=logging.INFO)
 st.header("Personalizing Question-Answering Models")
 # The first tab will be a no-memory simple question answering demo.
 [basic_qa_tab, memory_tab] = st.tabs(["Basic QA", "QA with memory"])
+
+
+@st.cache_resource
+def get_simple_qa_bot():
+    return SimpleQA(get_openai_model())
+
 
 with basic_qa_tab:
     chat_input = st.text_area(
@@ -24,7 +31,7 @@ with basic_qa_tab:
         label="Enter a question here",
         placeholder="Did Jane call John?",
     )
-    qa_bot = SimpleQA()
+    qa_bot = get_simple_qa_bot()
     if st.button("Answer", key="simple_qa_answer"):
         st.write(qa_bot.answer(chat=chat_input, question=question_input))
 
@@ -32,7 +39,7 @@ with basic_qa_tab:
 # This will use a single instance of the LargeCorpusQA class for all users.
 @st.cache_resource
 def get_large_corpus_qa_bot():
-    return LargeCorpusQA()
+    return LargeCorpusQA(get_openai_model())
 
 
 with memory_tab:

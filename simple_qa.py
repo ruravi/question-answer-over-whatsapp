@@ -4,7 +4,7 @@ from langchain import PromptTemplate, LLMChain
 
 
 class SimpleQA:
-    def __init__(self, model: LLM = OpenAI(temperature=0)) -> None:
+    def __init__(self, model: LLM) -> None:
         self.model = model
         self.prompt = self.__form_prompt()
         self.llm_chain = LLMChain(llm=self.model, prompt=self.prompt)

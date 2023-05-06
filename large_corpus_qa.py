@@ -17,7 +17,7 @@ import threading
 class LargeCorpusQA:
     def __init__(
         self,
-        model: LLM = OpenAI(temperature=0),
+        model: LLM,
         options: dict = {
             "chunk_size": 100,
             "persist_directory": "vector_index",
