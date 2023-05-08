@@ -51,10 +51,17 @@ with memory_tab:
 
     large_corpus_qa_bot = get_large_corpus_qa_bot()
     if st.button(
-        "Load",
+        "Load a new file",
+        key="large_corpus_qa_load_new",
+        help="This will take a few minutes. Click Load and come back after a coffee break.",
+    ):
+        large_corpus_qa_bot.initialize_vector_store("data/whatsapp_export.txt")
+    if st.button(
+        "Load existing index",
         key="large_corpus_qa_load",
         help="This will take a few minutes. Click Load and come back after a coffee break.",
     ):
-        large_corpus_qa_bot.initialize_vector_store(None)
+        large_corpus_qa_bot.initialize_vector_store()
+
     if st.button("Answer", key="large_corpus_qa_answer"):
         st.write(large_corpus_qa_bot.answer(question_input))
