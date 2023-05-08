@@ -94,7 +94,7 @@ class LargeCorpusQA:
 
     def __form_prompt_template(self):
         prompt_template = """
-            Read the following transripts of a several chats between two or more persons.
+            Read the following transcripts of several chats between two or more persons.
             Answer the question below correctly. Provide an explanation for your answer.
             Where possible cite the relevant part of the transcript.
             
