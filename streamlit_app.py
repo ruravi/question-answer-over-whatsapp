@@ -1,6 +1,7 @@
 import streamlit as st
 from simple_qa import SimpleQA
 from large_corpus_qa import LargeCorpusQA
+from sql_qa import SqlQA
 from models import get_openai_model
 import logging
 
@@ -8,7 +9,9 @@ logging.basicConfig(level=logging.INFO)
 
 st.header("Personalizing Question-Answering Models")
 # The first tab will be a no-memory simple question answering demo.
-[basic_qa_tab, memory_tab] = st.tabs(["Basic QA", "QA with memory"])
+[basic_qa_tab, memory_tab, database_tab] = st.tabs(
+    ["Basic QA", "QA with index", "QA with a database"]
+)
 
 
 @st.cache_resource
@@ -42,6 +45,8 @@ def get_large_corpus_qa_bot():
     return LargeCorpusQA(get_openai_model())
 
 
+INPUT_CHAT_DATA_FILE_PATH = "data/whatsapp_export.txt"
+
 with memory_tab:
     question_input = st.text_input(
         key="large_corpus_qa_question",
@@ -55,7 +60,7 @@ with memory_tab:
         key="large_corpus_qa_load_new",
         help="This will take a few minutes. Click Load and come back after a coffee break.",
     ):
-        large_corpus_qa_bot.initialize_vector_store("data/whatsapp_export.txt")
+        large_corpus_qa_bot.initialize_vector_store(INPUT_CHAT_DATA_FILE_PATH)
     if st.button(
         "Load existing index",
         key="large_corpus_qa_load",
@@ -65,3 +70,20 @@ with memory_tab:
 
     if st.button("Answer", key="large_corpus_qa_answer"):
         st.write(large_corpus_qa_bot.answer(question_input))
+
+
+@st.cache_resource
+def get_database_bot():
+    return SqlQA(get_openai_model(), INPUT_CHAT_DATA_FILE_PATH, parse=True)
+
+
+with database_tab:
+    question_input = st.text_input(
+        key="qa_with_database_question",
+        label="Enter a question here",
+        placeholder="Did Jane call John?",
+    )
+
+    database_bot = get_database_bot()
+    if st.button("Answer", key="qa_with_database_answer"):
+        st.write(database_bot.answer(question_input))
