@@ -1,5 +1,6 @@
 from pathlib import Path
 import re, csv
+from datetime import datetime
 import pandas as pd
 from sqlalchemy import create_engine
 
@@ -48,7 +49,16 @@ class WhatsAppToDb:
                 result = re.match(self.regex_pattern, line.strip())
                 if result:
                     date, sender, text = result.groups()
-                    intermediate_file_writer.writerow([date, sender, text])
+                    sender = sender.strip("~")
+                    sender = sender.strip()
+                    datetime_object = datetime.strptime(date, "%m/%d/%y, %I:%M:%S %p")
+                    intermediate_file_writer.writerow(
+                        [
+                            datetime_object.strftime("%Y-%m-%d %H:%M:%S"),
+                            sender,
+                            text.strip(),
+                        ]
+                    )
 
         return intermediate_path
 
