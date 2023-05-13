@@ -1,7 +1,7 @@
 import streamlit as st
-from simple_qa import SimpleQA
-from large_corpus_qa import LargeCorpusQA
-from sql_qa import SqlQA
+from bots.simple_qa import SimpleQA
+from bots.large_corpus_qa import LargeCorpusQA
+from bots.sql_qa import SqlQA
 from models import get_openai_model
 import logging
 

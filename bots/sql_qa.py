@@ -1,4 +1,4 @@
-from whatsapp_to_db import WhatsAppToDb
+from bots.data_helpers.whatsapp_to_db import WhatsAppToDb
 from langchain.llms.base import LLM
 from langchain import SQLDatabase
 from langchain.agents import create_sql_agent

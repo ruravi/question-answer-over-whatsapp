@@ -1,5 +1,5 @@
 import unittest
-from whatsapp_to_db import WhatsAppToDb
+from bots.data_helpers.whatsapp_to_db import WhatsAppToDb
 
 
 class TestCases(unittest.TestCase):

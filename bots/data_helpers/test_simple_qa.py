@@ -1,7 +1,7 @@
 import unittest
 from langchain.llms.fake import FakeListLLM
-from simple_qa import SimpleQA
-from large_corpus_qa import LargeCorpusQA
+from bots.simple_qa import SimpleQA
+from bots.large_corpus_qa import LargeCorpusQA
 
 
 class TestSimpleQA(unittest.TestCase):
