@@ -1,7 +1,6 @@
 from typing import Optional, List
 from langchain.llms.base import LLM
 from langchain import PromptTemplate
-from langchain.llms.openai import OpenAI
 from langchain.text_splitter import CharacterTextSplitter
 from transformers import GPT2TokenizerFast
 from langchain.vectorstores import Chroma

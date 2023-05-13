@@ -70,4 +70,4 @@ class WhatsAppToDb:
         df = pd.read_csv(csv_path)
 
         # Write the DataFrame to a SQLite table
-        df.to_sql("whatsapp_chat", engine, if_exists="replace", index=False)
+        df.to_sql("messages", engine, if_exists="replace", index=False)
