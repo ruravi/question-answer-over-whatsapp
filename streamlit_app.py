@@ -2,6 +2,7 @@ import streamlit as st
 from bots.simple_qa import SimpleQA
 from bots.large_corpus_qa import LargeCorpusQA
 from bots.sql_qa import SqlQA
+from bots.e2e_qa import E2EQA
 from models import get_openai_model
 import logging
 
@@ -9,8 +10,8 @@ logging.basicConfig(level=logging.INFO)
 
 st.header("Personalizing Question-Answering Models")
 # The first tab will be a no-memory simple question answering demo.
-[basic_qa_tab, memory_tab, database_tab] = st.tabs(
-    ["Basic QA", "QA with index", "QA with a database"]
+[basic_qa_tab, memory_tab, database_tab, e2e_agent_tab] = st.tabs(
+    ["Basic QA", "QA with index", "QA with a database", "End to end Agent QA"]
 )
 
 
@@ -38,14 +39,14 @@ with basic_qa_tab:
     if st.button("Answer", key="simple_qa_answer"):
         st.write(qa_bot.answer(chat=chat_input, question=question_input))
 
+INPUT_CHAT_DATA_FILE_PATH = "data/whatsapp_export.txt"
 
 # This will use a single instance of the LargeCorpusQA class for all users.
 @st.cache_resource
 def get_large_corpus_qa_bot():
-    return LargeCorpusQA(get_openai_model())
-
-
-INPUT_CHAT_DATA_FILE_PATH = "data/whatsapp_export.txt"
+    result = LargeCorpusQA(get_openai_model())
+    result.initialize_vector_store(INPUT_CHAT_DATA_FILE_PATH)
+    return result
 
 with memory_tab:
     question_input = st.text_input(
@@ -61,12 +62,6 @@ with memory_tab:
         help="This will take a few minutes. Click Load and come back after a coffee break.",
     ):
         large_corpus_qa_bot.initialize_vector_store(INPUT_CHAT_DATA_FILE_PATH)
-    if st.button(
-        "Load existing index",
-        key="large_corpus_qa_load",
-        help="This will take a few minutes. Click Load and come back after a coffee break.",
-    ):
-        large_corpus_qa_bot.initialize_vector_store()
 
     if st.button("Answer", key="large_corpus_qa_answer"):
         st.write(large_corpus_qa_bot.answer(question_input))
@@ -87,3 +82,18 @@ with database_tab:
     database_bot = get_database_bot()
     if st.button("Answer", key="qa_with_database_answer"):
         st.write(database_bot.answer(question_input))
+
+@st.cache_resource
+def get_e2e_qa_bot():
+    return E2EQA(get_database_bot(), get_large_corpus_qa_bot(), get_openai_model())
+
+with e2e_agent_tab:
+    question_input = st.text_input(
+        key="e2e_qa_question",
+        label="Enter a question here",
+        placeholder="Did Jane call John?",
+    )
+
+    e2e_qa_bot = get_e2e_qa_bot()
+    if st.button("Answer", key="e2e_qa_answer"):
+        st.write(e2e_qa_bot.answer(question_input))
